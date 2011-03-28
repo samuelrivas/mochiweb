@@ -463,7 +463,12 @@ tokenize_number(B, S) ->
         {{int, Int}, S1} ->
             {{const, list_to_integer(Int)}, S1};
         {{float, Float}, S1} ->
-            {{const, list_to_float(Float)}, S1}
+            try
+                {{const, list_to_float(Float)}, S1}
+            catch
+                error:badarg ->
+                    throw({bad_float, Float})
+            end
     end.
 
 tokenize_number(B, sign, S=#decoder{offset=O}, []) ->
